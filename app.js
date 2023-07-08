@@ -20,6 +20,9 @@ app.use('/admin',require('./routers/AdminRouter'))
 app.use('/admin',require('./routers/RegisterAdmin'))
 app.use('/course',require('./routers/CourseList'))
 app.use('/category',require('./routers/CategoryRouter'))
+app.use('/video',require('./routers/VideoRouter'))
+app.use('/user',require('./routers/UserList'))
+app.use('/udetails',require('./routers/UserDetails'))
 
 app.get('/',(req,res) => {
     res.send('hello, world')
