@@ -4,7 +4,7 @@ const cors = require('cors')
 const path = require('path')
 
 const app = express();
-const port = 8080;
+const port = 3000;
 // // 使用内置的中间件来解析请求体
 app.use(express.json())
 // 开放跨域请求
