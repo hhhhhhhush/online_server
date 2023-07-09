@@ -12,15 +12,15 @@ router.post('/login', async (req, res) => {
         const { err, rows } = await db.async.all(query, params);
         if (err) {
             console.error('Error executing query:', err);
-            res.status(500).json({ code: 500, msg: "登录失败" });
+            res.send({ code: 500, msg: "登录失败" });
         } else if (rows.length === 0) {
-            res.status(404).json({ code: 404, msg: "账号不存在或密码错误" });
+            res.send({ code: 404, msg: "账号不存在或密码错误" });
         } else {
             res.status(200).json({ code: 200, msg: "登录成功", data: rows[0] });
         }
     } catch (error) {
         console.error('Error logging in:', error);
-        res.status(500).json({ code: 500, msg: "登录失败" });
+        res.send({ code: 500, msg: "登录失败" });
     }
 });
 
@@ -34,14 +34,13 @@ router.post('/register', async (req, res) => {
         const checkSql = "SELECT * FROM users WHERE phone = ?";
         const { err, rows } = await db.async.all(checkSql, [phone]);
         if (err) {
-            console.error('Error executing query:', err);
-            res.status(500).json({ code: 500, msg: "创建用户失败" });
+            res.send({ code: 500, msg: "创建用户失败" });
             return;
         }
 
         // 如果手机号已存在，则返回错误信息
         if (rows.length > 0) {
-            res.status(400).json({ code: 400, msg: "手机号已被注册" });
+            res.send({ code: 400, msg: "手机号已被注册" });
             return;
         }
 
@@ -57,14 +56,14 @@ router.post('/register', async (req, res) => {
         const { err: insertErr, rows: insertRows } = await db.async.run(insertSql, [username, password, phone, avatar, signature, gender, createTime, updateTime]);
         if (insertErr) {
             console.error('Error executing query:', insertErr);
-            res.status(500).json({ code: 500, msg: "创建用户失败" });
+            res.send({ code: 500, msg: "创建用户失败" });
         } else {
             const userId = await db.async.all("SELECT last_insert_rowid() as id");
             res.status(201).json({ code: 201, msg: "创建用户成功", data: { id: userId } });
         }
     } catch (error) {
         console.error('Error creating user:', error);
-        res.status(500).json({ code: 500, msg: "创建用户失败" });
+        res.send({ code: 500, msg: "创建用户失败" });
     }
 });
 
