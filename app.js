@@ -22,7 +22,7 @@ app.use('/course',require('./routers/CourseList'))
 app.use('/category',require('./routers/CategoryRouter'))
 app.use('/video',require('./routers/VideoRouter'))
 app.use('/user',require('./routers/UserList'))
-app.use('/udetails',require('./routers/UserDetails'))
+app.use('/swiper',require('./routers/SwiperRouter'))
 
 app.get('/',(req,res) => {
     res.send('hello, world')

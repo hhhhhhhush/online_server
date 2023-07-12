@@ -107,17 +107,34 @@ router.get('/user/:id', async (req, res) => {
 router.put('/update/:id', async (req, res) => {
     try {
         const userId = req.params.id;
-        const { username, password, phone, avatar, signature, gender } = req.body;
+        const { username, oldPass, newPass, phone, gender, signature, email, create_time } = req.body;
         const updateFields = {};
         const updateTime = new Date().toISOString();
 
         if (username) updateFields.username = username;
-        if (password) updateFields.password = password;
         if (phone) updateFields.phone = phone;
-        if (avatar) updateFields.avatar = avatar;
-        if (signature) updateFields.signature = signature;
         if (gender) updateFields.gender = gender;
+        if (signature) updateFields.signature = signature;
+        if (email) updateFields.email = email;
+        if (create_time) updateFields.create_time = create_time;
         updateFields.update_time = updateTime;
+
+        if (oldPass && newPass) {
+            // 验证旧密码是否正确
+            const query = "SELECT * FROM users WHERE id = ? AND password = ?";
+            const params = [userId, oldPass];
+            const { errUpdate, rows } = await db.async.all(query, params);
+            if (errUpdate) {
+                console.error('执行查询时发生错误:', errUpdate);
+                res.send({ code: 500, msg: "更新用户失败" });
+                return;
+            } else if (rows.length === 0) {
+                res.send({ code: 400, msg: "旧密码不正确" });
+                return;
+            }
+            // 更新密码
+            updateFields.password = newPass;
+        }
 
         let updateSql = "UPDATE users SET";
         const updateValues = [];
@@ -125,22 +142,24 @@ router.put('/update/:id', async (req, res) => {
             updateSql += ` ${field} = ?,`;
             updateValues.push(updateFields[field]);
         }
-        updateSql = updateSql.slice(0, -1); // Remove the trailing comma
+        updateSql = updateSql.slice(0, -1); // 移除末尾的逗号
         updateSql += " WHERE id = ?";
         updateValues.push(userId);
 
         const { err } = await db.async.run(updateSql, updateValues);
         if (err) {
-            console.error('Error executing query:', err);
+            console.error('执行查询时发生错误:', err);
             res.status(500).json({ code: 500, msg: "更新用户失败" });
         } else {
             res.status(200).json({ code: 200, msg: "更新用户成功" });
         }
     } catch (error) {
-        console.error('Error updating user:', error);
+        console.error('更新用户时发生错误:', error);
         res.status(500).json({ code: 500, msg: "更新用户失败" });
     }
 });
+
+
 
 
 // 删除用户
@@ -158,6 +177,29 @@ router.delete('/delete/:id', async (req, res) => {
     } catch (error) {
         console.error('Error deleting user:', error);
         res.status(500).json({ code: 500, msg: "删除用户失败" });
+    }
+});
+
+// 更新用户头像接口
+router.put('/update/avatar/:id', async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const { avatarUrl } = req.body;
+        const updateSql = "UPDATE users SET avatar = ? WHERE id = ?";
+        console.log(userId, avatarUrl);
+        const { err, rows } = await db.async.run(updateSql, [avatarUrl, userId]);
+        console.log(rows); // 检查受影响的行数
+        if (err) {
+            console.error('Error executing query:', err);
+            res.status(500).json({
+                code: 500, msg: "更新用户头像失败"
+            });
+        } else {
+            res.status(200).json({ code: 200, msg: "更新用户头像成功", data: { affectedRows: rows } });
+        }
+    } catch (error) {
+        console.error('Error updating user avatar:', error);
+        res.status(500).json({ code: 500, msg: "更新用户头像失败" });
     }
 });
 
