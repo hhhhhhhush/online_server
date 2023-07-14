@@ -23,6 +23,7 @@ app.use('/category',require('./routers/CategoryRouter'))
 app.use('/video',require('./routers/VideoRouter'))
 app.use('/user',require('./routers/UserList'))
 app.use('/swiper',require('./routers/SwiperRouter'))
+app.use('/review',require('./routers/ReviewsRouter'))
 
 app.get('/',(req,res) => {
     res.send('hello, world')
