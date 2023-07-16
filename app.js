@@ -24,6 +24,7 @@ app.use('/video',require('./routers/VideoRouter'))
 app.use('/user',require('./routers/UserList'))
 app.use('/swiper',require('./routers/SwiperRouter'))
 app.use('/review',require('./routers/ReviewsRouter'))
+app.use('/cart',require('./routers/ShopCart'))
 
 app.get('/',(req,res) => {
     res.send('hello, world')

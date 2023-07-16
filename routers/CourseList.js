@@ -19,6 +19,33 @@ router.get('/courselist', async (req, res) => {
     }
 });
 
+
+// 搜索课程
+router.get('/coursesearch', async (req, res) => {
+    try {
+        const { keyword } = req.query;
+        let searchSql = "SELECT * FROM `courses`";
+        let searchParams = [];
+        
+        if (keyword && keyword.trim() !== '') {
+            searchSql += " WHERE title LIKE ? OR description LIKE ? OR instructor LIKE ?";
+            const searchKeyword = `%${keyword}%`;
+            searchParams = [searchKeyword, searchKeyword, searchKeyword];
+        }
+        
+        const { err, rows } = await db.async.all(searchSql, searchParams);
+        if (err) {
+            console.error('Error executing query:', err);
+            res.status(500).json({ code: 500, msg: "搜索课程失败" });
+        } else {
+            res.status(200).json({ code: 200, msg: "搜索课程成功", data: rows });
+        }
+    } catch (error) {
+        console.error('Error searching course:', error);
+        res.status(500).json({ code: 500, msg: "搜索课程失败" });
+    }
+});
+
 // 获取单个课程
 router.get('/courseone/:id', async (req, res) => {
     try {
