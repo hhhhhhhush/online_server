@@ -5,9 +5,9 @@ const { db } = require('../db/DbUtils');
 // 添加商品到购物车
 router.post('/add', async (req, res) => {
     try {
-        const { user_id, course_id, quantity } = req.body;
-        const insertSql = "INSERT INTO ShoppingCart (user_id, course_id, quantity) VALUES (?, ?, ?)";
-        const { err } = await db.async.run(insertSql, [user_id, course_id, quantity]);
+        const { user_id, course_id, quantity, selected, cover_image, price, description } = req.body;
+        const insertSql = "INSERT INTO ShoppingCart (user_id, course_id, quantity, selected, cover_image, price, description) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        const { err } = await db.async.run(insertSql, [user_id, course_id, quantity, selected, cover_image, price, description]);
         if (err) {
             console.error('Error executing query:', err);
             res.status(500).json({ code: 500, msg: "添加商品到购物车失败" });
@@ -19,6 +19,7 @@ router.post('/add', async (req, res) => {
         res.status(500).json({ code: 500, msg: "添加商品到购物车失败" });
     }
 });
+
 
 // 获取用户购物车列表
 router.get('/:user_id', async (req, res) => {
