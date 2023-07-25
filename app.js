@@ -25,6 +25,7 @@ app.use('/user',require('./routers/UserList'))
 app.use('/swiper',require('./routers/SwiperRouter'))
 app.use('/review',require('./routers/ReviewsRouter'))
 app.use('/cart',require('./routers/ShopCart'))
+app.use('/note',require('./routers/NoteRouter'))
 
 app.get('/',(req,res) => {
     res.send('hello, world')
