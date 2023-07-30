@@ -28,7 +28,7 @@ app.use('/cart',require('./routers/ShopCart'))
 app.use('/note',require('./routers/NoteRouter'))
 
 app.get('/',(req,res) => {
-    res.send('hello, world')
+    res.send('服务成功启动~')
 })
 
 app.listen(port,() => {
